@@ -1,7 +1,7 @@
 @page "{id:int}"
 @model ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento.Delete
 
-@if (Model.Pedido_ProdutoList.Any())
+@if (Model.PedidoProdutoList.Any())
     {
         @if(TempData["Aviso_Excluir"] != null)
         {

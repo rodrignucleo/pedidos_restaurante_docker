@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjetoGerenciamentoRestaurante.RazorPages.Models
 {
-    public class Pedido_ProdutoModel
+    public class PedidoProdutoModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

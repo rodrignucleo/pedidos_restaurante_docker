@@ -9,7 +9,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
     public class Delete : PageModel
     {
         public AtendimentoModel AtendimentoModel { get; set; } = new();
-        public List<Pedido_ProdutoModel> Pedido_ProdutoList { get; set; } = new();
+        public List<PedidoProdutoModel> PedidoProdutoList { get; set; } = new();
         
         public Delete(){
         }
@@ -34,7 +34,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
             
                         // Obter informações dos pedidos
             var httpClientPedido = new HttpClient();
-            var urlPedido = HttpConst.http + $"/Pedido_Produto/{id}";
+            var urlPedido = HttpConst.http + $"/PedidoProduto/{id}";
             var responsePedido = await httpClientPedido.GetAsync(urlPedido);
 
             if (!responsePedido.IsSuccessStatusCode)
@@ -43,11 +43,11 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
             }
 
             var contentPedido = await responsePedido.Content.ReadAsStringAsync();
-            var pedido_ProdutoList = JsonConvert.DeserializeObject<List<Pedido_ProdutoModel>>(contentPedido);
+            var pedidoProdutoList = JsonConvert.DeserializeObject<List<PedidoProdutoModel>>(contentPedido);
 
-            Pedido_ProdutoList = pedido_ProdutoList!;
+            PedidoProdutoList = pedidoProdutoList!;
 
-            if(Pedido_ProdutoList is not null){
+            if(PedidoProdutoList is not null){
                 TempData["Aviso_Excluir"] = "Esse atendimento não pode ser excluido, ele tem pedidos cadastrados!!!";
                 return Page();
             }

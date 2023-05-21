@@ -13,7 +13,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Pedido
         public PedidoModel PedidoModel { get; set; } = new();
 
         [BindProperty]
-        public Pedido_ProdutoModel Pedido_ProdutoModel { get; set; } = new();
+        public PedidoProdutoModel PedidoProdutoModel { get; set; } = new();
         public List<GarconModel> GarconList { get; set; } = new();
         public List<ProdutoModel> ProdutoList { get; set; } = new();
         // public List<Pedido_ProdutoModel> Pedido_ProdutoList { get; set; } = new();
@@ -78,7 +78,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Pedido
 
                 var httpClientPedido_Produto = new HttpClient();
                 var urlPedido_Produto = HttpConst.http + $"/Pedido_Produto/Create/{pedidoId}";
-                var produtoJsonPedido_Produto = JsonConvert.SerializeObject(Pedido_ProdutoModel);
+                var produtoJsonPedido_Produto = JsonConvert.SerializeObject(PedidoProdutoModel);
 
                 var contentPedido_Produto = new StringContent(produtoJsonPedido_Produto, Encoding.UTF8, "application/json");
                 var responsePedido_Produto = await httpClientPedido_Produto.PostAsync(urlPedido_Produto, contentPedido_Produto);

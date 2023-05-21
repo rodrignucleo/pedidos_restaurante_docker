@@ -22,9 +22,7 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Atendimento
                 a.AtendimentoFechado,
                 a.DataCriacao,
                 a.DataSaida 
-            }
-            )
-            .ToList();
+            }).ToList();
             
             return Ok(atendimentos);
         }
@@ -38,27 +36,28 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Atendimento
         }
         
         [HttpGet("/Atendimento/Details/{id:int}")]
-        public IActionResult GetById([FromRoute] int id, [FromServices] AppDbContext context)
+        public IActionResult GetById([FromRoute] int id, 
+            [FromServices] AppDbContext context)
         {
             var atendimentoModel = context.Atendimento!.Include(p => p.Mesa).FirstOrDefault(x => x.AtendimentoId == id);
             if (atendimentoModel == null)
             {
                 return NotFound();
             }
-
-            return Ok(new
-            {
-                AtendimentoId = atendimentoModel.AtendimentoId,
-                AtendimentoFechado = atendimentoModel.AtendimentoFechado,
-                DataSaida = atendimentoModel.DataSaida,
-                MesaId = atendimentoModel.MesaId,
-                Mesa = new
-                {
-                    MesaId = atendimentoModel.Mesa!.MesaId,
-                    Numero = atendimentoModel.Mesa.Numero,
-                    HoraAbertura = atendimentoModel.Mesa.HoraAbertura
-                }
-            });
+            return Ok(atendimentoModel);
+            // return Ok(new
+            // {
+            //     AtendimentoId = atendimentoModel.AtendimentoId,
+            //     AtendimentoFechado = atendimentoModel.AtendimentoFechado,
+            //     DataSaida = atendimentoModel.DataSaida,
+            //     MesaId = atendimentoModel.MesaId,
+            //     Mesa = new
+            //     {
+            //         MesaId = atendimentoModel.Mesa!.MesaId,
+            //         Numero = atendimentoModel.Mesa.Numero,
+            //         HoraAbertura = atendimentoModel.Mesa.HoraAbertura
+            //     }
+            // });
         }
 
         [HttpPost("/Atendimento/Create")]

@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using ProjetoGerenciamentoRestaurante.RazorPages.Models;
 
+
 namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages
 {
     public class Index : PageModel
     {
-        public List<PedidoView>PedidoViewList { get; set; } = new();
+        public List<PedidoViewModel>PedidoViewList { get; set; } = new();
         
         public Index(){}
        
@@ -18,7 +19,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages
             var response = await httpClient.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
 
-            PedidoViewList = JsonConvert.DeserializeObject<List<PedidoView>>(content)!;
+            PedidoViewList = JsonConvert.DeserializeObject<List<PedidoViewModel>>(content)!;
             return Page();
         }
 

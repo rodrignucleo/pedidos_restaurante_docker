@@ -2,6 +2,8 @@ using ProjetoGerenciamentoRestaurante.API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjetoGerenciamentoRestaurante.API.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProjetoGerenciamentoRestaurante.API.Controllers.Pedido
 {
@@ -20,10 +22,26 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Pedido
                             .Include(g => g.Garcon)
                             .Include(a => a.Atendimento)
                             .Include(m => m.Atendimento!.Mesa)
+                            .Select(p => new{
+                                p.PedidoId,
+                                p.AtendimentoId,
+                                p.Atendimento,
+                                p.GarconId,
+                                p.Garcon,
+                                p.HorarioPedido
+                            })
                             .ToList();
             var pedidoProdutoList = context.PedidoProduto!
                             .Include(p => p.Pedido)
                             .Include(x => x.Produto)
+                            .Select(h => new{
+                                h.PedidoProdutoId,
+                                h.PedidoId,
+                                h.Pedido,
+                                h.ProdutoId,
+                                h.Produto,
+                                h.Quantidade
+                            })
                             .ToList();
             var garconList = context.Garcon!.ToList();
 
@@ -51,6 +69,15 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Pedido
                 }
             }
 
+            // var options = new JsonSerializerOptions
+            // {
+            //     ReferenceHandler = ReferenceHandler.Preserve,
+            //     MaxDepth = 32
+            // };
+
+            // var jsonString = JsonSerializer.Serialize(pedidoViewList, options);
+
+            // return Content(jsonString, "application/json");
             return Ok(pedidoViewList);
         }
     }

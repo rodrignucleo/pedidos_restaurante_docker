@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
 
 namespace ProjetoGerenciamentoRestaurante.API.Models
@@ -18,15 +19,15 @@ namespace ProjetoGerenciamentoRestaurante.API.Models
         public int GarconId { get; set; }
         public GarconModel? Garcon { get; set; }
         
-        public DateTime HorarioPedido;
+        public TimeOnly HorarioPedido { get; set; }
 
         public List<ProdutoModel>? Produtos;
 
-        public DateTime GetHorarioPedido(){
-            return HorarioPedido;
-        }
-        public void SetHorarioPedido(string horarioPedido){
-            HorarioPedido =  DateTime.ParseExact(horarioPedido, "HH:mm:ss", null);
-        }
+        // public TimeOnly GetHorarioPedido(){
+        //     return HorarioPedido;
+        // }
+        // public void SetHorarioPedido(string horarioPedido){
+        //     HorarioPedido =  DateTime.ParseExact(horarioPedido, "HH:mm:ss", null);
+        // }
     }
 }

@@ -54,7 +54,7 @@ CREATE TABLE `Pedido` (
   `PedidoId` INT NOT NULL AUTO_INCREMENT,
   `AtendimentoId` INT NOT NULL,
   `GarconId` INT NOT NULL,
-  `HorarioPedido` varchar(27) NOT NULL,
+  `HorarioPedido` time NOT NULL,
   PRIMARY KEY(`PedidoId`),
   CONSTRAINT `fk_pedidoatendimento`
     FOREIGN KEY (`AtendimentoId`)

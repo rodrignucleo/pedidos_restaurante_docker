@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +17,8 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Models
 
         public DateTime? DataCriacao { get; set; }
         public DateTime? DataSaida { get; set; }
+
+        // public List<PedidoModel>? Pedidos;
+
     }
 }

@@ -11,7 +11,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
         [BindProperty]
         public AtendimentoModel AtendimentoModel { get; set; } = new();
         public MesaModel MesaModel { get; set; } = new();
-        public List<Pedido_ProdutoModel> Pedido_ProdutoList { get; set; } = new();
+        public List<PedidoProdutoModel> PedidoProdutoList { get; set; } = new();
         
         public Details(){
         }
@@ -37,7 +37,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
             
             // Obter informações dos pedidos
             var httpClientPedido = new HttpClient();
-            var urlPedido = HttpConst.http + $"/Pedido_Produto/{id}";
+            var urlPedido = HttpConst.http + $"/PedidoProduto/{id}";
             var responsePedido = await httpClientPedido.GetAsync(urlPedido);
 
             if (!responsePedido.IsSuccessStatusCode)
@@ -46,9 +46,9 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
             }
 
             var contentPedido = await responsePedido.Content.ReadAsStringAsync();
-            var pedido_ProdutoList = JsonConvert.DeserializeObject<List<Pedido_ProdutoModel>>(contentPedido);
+            var pedidoProdutoList = JsonConvert.DeserializeObject<List<PedidoProdutoModel>>(contentPedido);
 
-            Pedido_ProdutoList = pedido_ProdutoList!;
+            PedidoProdutoList = pedidoProdutoList!;
 
             return Page();
         }
@@ -59,7 +59,7 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento
             }
 
             var httpClient = new HttpClient();
-            var url = $"http://localhost:5171/Pedido_Produto/Edit/{id}";
+            var url = $"http://localhost:5171/PedidoProduto/Edit/{id}";
             var atendimentoJson = JsonConvert.SerializeObject(AtendimentoModel);
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, url);
