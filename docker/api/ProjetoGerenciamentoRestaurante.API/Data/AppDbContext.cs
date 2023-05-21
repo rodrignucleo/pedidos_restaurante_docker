@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ProjetoGerenciamentoRestaurante.API.Data{
     public class AppDbContext : DbContext
     {
-        static readonly string connectionString = "host=localhost;database=DbRestaurante;user=root;password=12345678";
+        static readonly string connectionString = "host=localhost;database=DbRestaurante;user=root;password=12345678";// Docker -> host=mysql-container
         public DbSet<GarconModel>? Garcon {get; set;}
         public DbSet<MesaModel>? Mesa {get; set;}
         public DbSet<ProdutoModel>? Produto {get; set;}
