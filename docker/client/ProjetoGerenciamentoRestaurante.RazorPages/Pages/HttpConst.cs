@@ -7,6 +7,6 @@ namespace ProjetoGerenciamentoRestaurante.RazorPages.Pages
 {
     public class HttpConst
     {
-        public const string http = "http://localhost:5171"; //Docker -> http:api-container/8000
+        public const string http = "http://api-container:8000"; //Docker -> http://api-container:8000 // Local -> http://localhost:5171
     }
 }

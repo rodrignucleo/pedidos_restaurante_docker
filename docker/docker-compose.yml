@@ -27,7 +27,7 @@ services:
   webrazor:
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: client/Dockerfile
     container_name: web-container
     ports: 
       - 9001:9001

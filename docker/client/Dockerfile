@@ -17,17 +17,17 @@ ENV DisableHttpsRedirection=true
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["./frontend/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj", "./"]
+COPY ["./client/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj", "./"]
 
 RUN dotnet restore "./ProjetoGerenciamentoRestaurante.RazorPages.csproj"
 COPY . .
 
 WORKDIR "/src/."
 
-RUN dotnet build "frontend/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj" -c Release -o /app/build
+RUN dotnet build "client/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "frontend/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj" -c Release -o /app/publish
+RUN dotnet publish "client/ProjetoGerenciamentoRestaurante.RazorPages/ProjetoGerenciamentoRestaurante.RazorPages.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
