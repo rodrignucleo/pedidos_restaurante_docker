@@ -11,28 +11,64 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Atendimento
     [Route("api/[controller]")]
     public class AtendimentoController : ControllerBase
     {
+        public List<AtendimentoModel> AtendimentosList { get; set; } = new();
+
         [HttpGet]
         [Route("/Atendimento")]
         public IActionResult Get([FromServices] AppDbContext context){
-            var atendimentos = context.Atendimento!.Include(m => m.Mesa)
-            .Select(a => new{
-                a.AtendimentoId,
-                a.Mesa,
-                a.MesaId,
-                a.AtendimentoFechado,
-                a.DataCriacao,
-                a.DataSaida 
-            }).ToList();
+            var atendimentos = context.Atendimento!
+                            .Include(m => m.Mesa)
+                            .Select(a => new{
+                                a.AtendimentoId,
+                                a.Mesa,
+                                a.MesaId,
+                                a.AtendimentoFechado,
+                                a.DataCriacao,
+                                a.DataSaida
+                            }).ToList();
+
+            var pedidoList = context.Pedido!
+                            .Include(g => g.Garcon)
+                            .Include(a => a.Atendimento)
+                            .Include(m => m.Atendimento!.Mesa)
+                            .Select(p => new{
+                                p.PedidoId,
+                                p.AtendimentoId,
+                                p.Atendimento,
+                                p.GarconId,
+                                p.Garcon,
+                                p.HorarioPedido
+                            })
+                            .ToList();
             
-            return Ok(atendimentos);
-        }
-        private static DateTime? ParseDateTime(string? dateTimeString)
-        {
-            if (dateTimeString != null)
-            {
-                return DateTime.ParseExact(dateTimeString, "yyyy-MM-dd HH:mm:ss", null);
+            foreach(var a in atendimentos){
+                AtendimentoModel atendimento = new();
+
+                atendimento.AtendimentoId = atendimento.AtendimentoId;
+                atendimento.Mesa = a.Mesa;
+                atendimento.MesaId = a.MesaId;
+                atendimento.AtendimentoFechado= a.AtendimentoFechado;
+                atendimento.DataCriacao = a.DataCriacao;
+                atendimento.DataSaida = a.DataSaida;
+
+                foreach (var p in pedidoList){
+                    if(p.AtendimentoId == a.AtendimentoId && p is not null){
+                        PedidoModel pedido = new();
+
+                        pedido.PedidoId = p.PedidoId;
+                        pedido.AtendimentoId = p.AtendimentoId;
+                        pedido.Atendimento = p.Atendimento;
+                        pedido.GarconId = p.GarconId;
+                        pedido.Garcon = p.Garcon;
+                        pedido.HorarioPedido = p.HorarioPedido;
+
+                        atendimento.Pedidos.Add(pedido);
+                    }
+                }
+                AtendimentosList.Add(atendimento);
             }
-            return null;
+            
+            return Ok(AtendimentosList);
         }
         
         [HttpGet("/Atendimento/Details/{id:int}")]
@@ -40,24 +76,50 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Atendimento
             [FromServices] AppDbContext context)
         {
             var atendimentoModel = context.Atendimento!.Include(p => p.Mesa).FirstOrDefault(x => x.AtendimentoId == id);
-            if (atendimentoModel == null)
-            {
+            
+            if (atendimentoModel == null){
                 return NotFound();
             }
-            return Ok(atendimentoModel);
-            // return Ok(new
-            // {
-            //     AtendimentoId = atendimentoModel.AtendimentoId,
-            //     AtendimentoFechado = atendimentoModel.AtendimentoFechado,
-            //     DataSaida = atendimentoModel.DataSaida,
-            //     MesaId = atendimentoModel.MesaId,
-            //     Mesa = new
-            //     {
-            //         MesaId = atendimentoModel.Mesa!.MesaId,
-            //         Numero = atendimentoModel.Mesa.Numero,
-            //         HoraAbertura = atendimentoModel.Mesa.HoraAbertura
-            //     }
-            // });
+            
+            var pedidoList = context.Pedido!
+                            .Include(g => g.Garcon)
+                            .Include(a => a.Atendimento)
+                            .Include(m => m.Atendimento!.Mesa)
+                            .Select(p => new{
+                                p.PedidoId,
+                                p.AtendimentoId,
+                                p.Atendimento,
+                                p.GarconId,
+                                p.Garcon,
+                                p.HorarioPedido
+                            })
+                            .ToList();
+            
+            AtendimentoModel atendimento = new();
+
+            atendimento.AtendimentoId = atendimento.AtendimentoId;
+            atendimento.Mesa = atendimentoModel!.Mesa;
+            atendimento.MesaId = atendimentoModel.MesaId;
+            atendimento.AtendimentoFechado= atendimentoModel.AtendimentoFechado;
+            atendimento.DataCriacao = atendimentoModel.DataCriacao;
+            atendimento.DataSaida = atendimentoModel.DataSaida;
+
+            foreach (var p in pedidoList){
+                if(p.AtendimentoId == atendimentoModel.AtendimentoId && p is not null){
+                    PedidoModel pedido = new();
+
+                    pedido.PedidoId = p.PedidoId;
+                    pedido.AtendimentoId = p.AtendimentoId;
+                    pedido.Atendimento = p.Atendimento;
+                    pedido.GarconId = p.GarconId;
+                    pedido.Garcon = p.Garcon;
+                    pedido.HorarioPedido = p.HorarioPedido;
+
+                    atendimento.Pedidos.Add(pedido);
+                }
+            }
+            
+            return Ok(atendimento);
         }
 
         [HttpPost("/Atendimento/Create")]

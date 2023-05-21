@@ -22,12 +22,5 @@ namespace ProjetoGerenciamentoRestaurante.API.Models
         public TimeOnly HorarioPedido { get; set; }
 
         public List<ProdutoModel>? Produtos;
-
-        // public TimeOnly GetHorarioPedido(){
-        //     return HorarioPedido;
-        // }
-        // public void SetHorarioPedido(string horarioPedido){
-        //     HorarioPedido =  DateTime.ParseExact(horarioPedido, "HH:mm:ss", null);
-        // }
     }
 }
