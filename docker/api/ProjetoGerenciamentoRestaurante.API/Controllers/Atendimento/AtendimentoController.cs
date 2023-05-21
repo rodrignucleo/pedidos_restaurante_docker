@@ -20,8 +20,8 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Atendimento
                 a.Mesa,
                 a.MesaId,
                 a.AtendimentoFechado,
-                DataCriacao = ParseDateTime(a.DataCriacao.ToString()),
-                DataSaida = ParseDateTime(a.DataSaida.ToString())
+                a.DataCriacao,
+                a.DataSaida 
             }
             )
             .ToList();

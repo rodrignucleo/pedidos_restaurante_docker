@@ -2,6 +2,8 @@ using ProjetoGerenciamentoRestaurante.API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjetoGerenciamentoRestaurante.API.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProjetoGerenciamentoRestaurante.API.Controllers.Pedido
 {
@@ -19,10 +21,27 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Pedido
                     .ThenInclude(p => p!.Atendimento)
                         .ThenInclude(a => a!.Mesa)
                 .Include(p => p.Produto)
+                .Select(p => new{
+                    p.PedidoProdutoId,
+                    p.PedidoId,
+                    p.Pedido,
+                    p.ProdutoId,
+                    p.Produto,
+                    p.Quantidade
+                })
                 .Where(e => e.Pedido!.Atendimento!.AtendimentoId  == id)
                 .ToList();
 
-            return Ok(pedidoProdutos);
+            // return Ok(pedidoProdutos);
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                MaxDepth = 32
+            };
+
+            var jsonString = JsonSerializer.Serialize(pedidoProdutos, options);
+
+            return Content(jsonString, "application/json");
         }
 
         private static DateTime? ParseTime(string? timeString)

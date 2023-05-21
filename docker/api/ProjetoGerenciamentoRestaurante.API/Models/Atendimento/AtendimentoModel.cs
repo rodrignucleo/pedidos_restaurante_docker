@@ -18,7 +18,7 @@ namespace ProjetoGerenciamentoRestaurante.API.Models
         public DateTime? DataCriacao { get; set; }
         public DateTime? DataSaida { get; set; }
 
-        public List<PedidoModel>? Pedidos { get; set; }
+        public List<PedidoModel>? Pedidos;
 
     }
 }

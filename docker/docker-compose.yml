@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql:
+    # image: mysql
+    build: 
+      context: .
+      dockerfile: Db/Dockerfile
+    # build: ./db/
+    container_name: mysql-container
+    environment:
+      # MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: 12345678
+      # MYSQL_DATABASE: teste
+    # build:
+    #   context: .
+    #   dockerfile: C:/Users/jacks/Documents/DockerTest/db/Dockerfile
+    ports:
+      - 3307:3306
+    # volumes:
+    #   - ./docker/Db/Data:/var/lib/mysql
+
+  webapi:
+    # image: api-image
+    build: 
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: api-container
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql
+  
+  webrazor:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: web-container
+    ports: 
+      - 9001:9001
+    depends_on:
+      -  webapi
+    
+# volumes:
+#   db_volume: /var/lib/mysql
+#volumes:
+#    dm_volume:

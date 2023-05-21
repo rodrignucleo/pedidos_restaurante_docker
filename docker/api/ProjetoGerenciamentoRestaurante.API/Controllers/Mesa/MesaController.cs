@@ -12,9 +12,17 @@ namespace ProjetoGerenciamentoRestaurante.API.Controllers.Mesa
         [HttpGet]
         [Route("/Mesa")]
         public IActionResult Get([FromServices] AppDbContext context){
-            var mesas = context.Mesa!.ToList();
+            var mesas = context.Mesa!
+            .Select(m => new{
+                m.MesaId,
+                m.Numero,
+                m.Status,
+                // HoraAbertura = ParseDateTime(m.HoraAbertura.ToString())
+                m.HoraAbertura
+            })
+            .ToList();
 
-            return Ok( context.Mesa!.ToList());
+            return Ok( mesas);
         } 
                 
         private static DateTime? ParseDateTime(string? dateTimeString)

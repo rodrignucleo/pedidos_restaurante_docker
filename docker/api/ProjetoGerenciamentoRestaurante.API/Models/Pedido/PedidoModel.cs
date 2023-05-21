@@ -20,7 +20,7 @@ namespace ProjetoGerenciamentoRestaurante.API.Models
         
         public DateTime HorarioPedido;
 
-        // public List<ProdutoModel>? Produtos { get; set; }
+        public List<ProdutoModel>? Produtos;
 
         public DateTime GetHorarioPedido(){
             return HorarioPedido;

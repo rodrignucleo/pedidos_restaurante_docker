@@ -16,31 +16,34 @@ namespace ProjetoGerenciamentoRestaurante.API.Models
         [Required(ErrorMessage = "Status é obrigatório!")]
         public bool Status { get; set; }
         
-        public DateTime? HoraAbertura { 
-            get => HoraAbertura; 
-            set => SetHoraAbertura(value);
-        }
+        public DateTime? HoraAbertura { get; set; }
+        // { 
+        //     get { return this.HoraAbertura; } 
+        //     set => SetHoraAbertura(value);
+        // }
 
-        public DateTime? GetHoraAbertura(){
-            if(HoraAbertura != null){
-                return DateTime.ParseExact(HoraAbertura.ToString(), "yyyy-MM-dd HH:mm:ss", null);
-            }
+        // public DateTime? GetHoraAbertura(){
+        //     if(HoraAbertura != null){
+        //         return DateTime.ParseExact(HoraAbertura.ToString(), "yyyy-MM-dd HH:mm:ss", null);
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
 
-        public void SetHoraAbertura(DateTime? horaAbertura){
+        // public void SetHoraAbertura(DateTime? horaAbertura){
             
-            // if (horaAbertura != null)
-            // {
-            //     HoraAbertura = DateTime.Parse(horaAbertura.ToString());
-            // }
-            // else{
-            //     HoraAbertura = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
-            // }
-            HoraAbertura = horaAbertura;
+        //     if (horaAbertura != null)
+        //     {
+        //         this.HoraAbertura = DateTime.Parse(horaAbertura.Value.ToString("yyyy-MM-ddTHH:mm:ss"));
+        //     }
+        //     else{
+        //         // DateTime a = DateTime.Now;
+
+        //         this.HoraAbertura = horaAbertura;
+        //     }
+        //     // HoraAbertura = horaAbertura;
             
             
-        }
+        // }
     }
 }

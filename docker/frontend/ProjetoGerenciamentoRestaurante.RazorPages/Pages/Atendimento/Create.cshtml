@@ -1,0 +1,35 @@
+@page
+@model ProjetoGerenciamentoRestaurante.RazorPages.Pages.Atendimento.Create
+<div align="center">
+<h1>Cadastrar Atendimento</h1>
+
+<hr/>
+<div>
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-dange"></div>
+            <input type="hidden" asp-for="AtendimentoModel.AtendimentoId"/>
+            <div class="form-group">
+                @if(TempData["Aviso_Alocar_Mesa"] != null)
+                {
+                <div class="alert alert-success">@TempData["Aviso_Alocar_Mesa"]</div>
+                }
+            <label asp-for="AtendimentoModel.MesaId">Numero da Mesa</label></br>
+            <select asp-for="AtendimentoModel.MesaId" class="form-control">
+                <option value="">Selecione o número da Mesa</option>
+                @foreach (var mesaModel in Model.MesaList.OrderBy(g => g.Numero))
+                {
+                    <option value="@mesaModel.MesaId">@mesaModel.Numero</option>
+                }
+            </select>
+            </div>
+            <br/>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Salvar"/>
+                <a asp-page="/Atendimento/Index" class="btn btn-secondary"> Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
