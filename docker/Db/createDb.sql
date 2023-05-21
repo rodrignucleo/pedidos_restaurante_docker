@@ -1,142 +1,614 @@
 CREATE DATABASE IF NOT EXISTS `DbRestaurante` DEFAULT CHARACTER SET utf8;
 USE DbRestaurante;
 
---
--- Table structure for table Mesa
---
-
-DROP TABLE IF EXISTS `Mesa`;
-
-CREATE TABLE `Mesa` (
-  `MesaId` INT NOT NULL AUTO_INCREMENT,
-  `Numero` INT NOT NULL,
-  `Status` INT NOT NULL,
-  `HoraAbertura` varchar(27) NOT NULL,
-  PRIMARY KEY(`MesaId`)
+CREATE TABLE Mesa (
+	MesaId INT NOT NULL AUTO_INCREMENT,
+	Numero INT NOT NULL,
+	Status INT NOT NULL,
+	HoraAbertura TEXT NULL,
+	PRIMARY KEY (MesaId)
 );
 
-DROP TABLE IF EXISTS `Atendimento`;
+CREATE INDEX MesaId ON Mesa(MesaId);
 
---
--- Table structure for table Atendimento
---
-
-CREATE TABLE `Atendimento` (
-    `AtendimentoId` INT NOT NULL AUTO_INCREMENT,
-    `MesaId` INT NOT NULL,
-    `AtendimentoFechado` INT NOT NULL,
-    `DataCriacao` varchar(27) NOT NULL,
-    `DataSaida` varchar(26) NOT NULL,
-    PRIMARY KEY(`AtendimentoId`),
-    CONSTRAINT `fk_atendimentomesa`
-        FOREIGN KEY (`MesaId`)
-        REFERENCES `Mesa` (`MesaId`)
+CREATE TABLE Garcon (
+	GarconId INT NOT NULL AUTO_INCREMENT,
+	Nome TEXT NOT NULL,
+	Sobrenome TEXT NOT NULL,
+	Cpf TEXT NOT NULL,
+	Telefone TEXT NOT NULL,
+	PRIMARY KEY (GarconId)
 );
 
-CREATE INDEX `fk_atendimentomesa_idx` ON `Atendimento` (`MesaId` ASC) VISIBLE;
+CREATE INDEX GarconId ON Garcon(GarconId);
 
---
--- Table structure for table Categoria
---
-
-DROP TABLE IF EXISTS `Categoria`;
-
-CREATE TABLE `Categoria` (
-  `CategoriaId` INT NOT NULL AUTO_INCREMENT,
-  `Nome` varchar(17) NOT NULL,
-  `Descricao` varchar(24) NOT NULL,
-  PRIMARY KEY(`CategoriaId`)
+CREATE TABLE Categoria (
+CategoriaId INT NOT NULL AUTO_INCREMENT,
+Nome TEXT NOT NULL,
+Descricao TEXT NOT NULL,
+PRIMARY KEY (CategoriaId)
 );
 
---
--- Table structure for table Garcon
---
+CREATE INDEX CategoriaId ON Categoria(CategoriaId);
 
-DROP TABLE IF EXISTS `Garcon`;
-
-CREATE TABLE `Garcon` (
-  `GarconId` INT NOT NULL AUTO_INCREMENT,
-  `Nome` varchar(8) NOT NULL,
-  `Sobrenome` varchar(25) NOT NULL,
-  `Cpf` varchar(14) NOT NULL,
-  `Telefone` varchar(15) NOT NULL,
-  PRIMARY KEY(`GarconId`)
+CREATE TABLE Produto (
+	ProdutoId INT NOT NULL AUTO_INCREMENT,
+	Nome TEXT NOT NULL,
+	Descricao TEXT NOT NULL,
+	Preco FLOAT NOT NULL,
+	CategoriaId INT NOT NULL,
+	PRIMARY KEY (ProdutoId),
+	FOREIGN KEY (CategoriaId) REFERENCES Categoria (CategoriaId) ON DELETE CASCADE
 );
 
---
--- Table structure for table Pedido
---
+CREATE INDEX IX_Produto_CategoriaId ON Produto (CategoriaId);
+CREATE INDEX ProdutoId ON Produto (ProdutoId);
 
-DROP TABLE IF EXISTS `Pedido`;
-
-CREATE TABLE `Pedido` (
-  `PedidoId` INT NOT NULL AUTO_INCREMENT,
-  `AtendimentoId` INT NOT NULL,
-  `GarconId` INT NOT NULL,
-  `HorarioPedido` varchar(19) NOT NULL,
-  PRIMARY KEY(`PedidoId`),
-  CONSTRAINT `fk_pedidoatendimento`
-    FOREIGN KEY (`AtendimentoId`)
-    REFERENCES `Atendimento` (`AtendimentoId`),
-  CONSTRAINT `fk_pedidogarcon`
-    FOREIGN KEY (`GarconId`)
-    REFERENCES `Garcon` (`GarconId`)
+CREATE TABLE Atendimento (
+	AtendimentoId INT NOT NULL AUTO_INCREMENT,
+	MesaId INT NOT NULL,
+	AtendimentoFechado INT NOT NULL,
+	DataCriacao TEXT NULL,
+	DataSaida TEXT NULL,
+	PRIMARY KEY (AtendimentoId),
+	FOREIGN KEY (MesaId) REFERENCES Mesa (MesaId) ON DELETE CASCADE
 );
 
-CREATE INDEX `fk_pedidoatendimento_idx` ON `Pedido` (`AtendimentoId` ASC) VISIBLE;
-CREATE INDEX `fk_pedidogarcon_idx` ON `Pedido` (`GarconId` ASC) VISIBLE;
+CREATE INDEX IX_Atendimento_MesaId ON Atendimento (MesaId);
+CREATE INDEX AtendimentoId ON Atendimento (AtendimentoId);
 
---
--- Table structure for table Produto
---
-
-DROP TABLE IF EXISTS `Produto`;
-
-CREATE TABLE `Produto` (
-  `ProdutoId` INT NOT NULL AUTO_INCREMENT,
-  `CategoriaId` INT NOT NULL,
-  `Nome` varchar(21) NOT NULL,
-  `Descricao` varchar(207) NOT NULL,
-  `Preco` decimal(4,2) NOT NULL,
-  PRIMARY KEY(`ProdutoId`),
-  CONSTRAINT `fk_produtocategoria`
-    FOREIGN KEY (`CategoriaId`)
-    REFERENCES `Categoria` (`CategoriaId`)
+CREATE TABLE Pedido (
+PedidoId INT NOT NULL AUTO_INCREMENT,
+AtendimentoId INT NOT NULL,
+GarconId INT NOT NULL,
+HorarioPedido TEXT NOT NULL,
+PRIMARY KEY (PedidoId),
+FOREIGN KEY (AtendimentoId) REFERENCES Atendimento (AtendimentoId) ON DELETE CASCADE,
+FOREIGN KEY (GarconId) REFERENCES Garcon (GarconId) ON DELETE CASCADE
 );
 
-CREATE INDEX `fk_produtcategoria_idx` ON `Produto` (`CategoriaId` ASC) VISIBLE;
+CREATE INDEX IX_Pedido_AtendimentoId ON Pedido (AtendimentoId);
+CREATE INDEX IX_Pedido_GarconId ON Pedido (GarconId);
+CREATE INDEX PedidoId ON Pedido (PedidoId);
 
---
--- Table structure for table Pedido_Produto
---
-
-DROP TABLE IF EXISTS `Pedido_Produto`;
-
-CREATE TABLE `Pedido_Produto` (
-  `PedidoProdutoId` INT NOT NULL AUTO_INCREMENT,
-  `PedidoId` INT NOT NULL,
-  `ProdutoId` INT NOT NULL,
-  `Quantidade` decimal(2,1) NOT NULL,
-  PRIMARY KEY(`PedidoProdutoId`),
-  CONSTRAINT `fk_pedidoprodutopedido`
-    FOREIGN KEY (`PedidoId`)
-    REFERENCES `Pedido` (`PedidoId`),
-  CONSTRAINT `fk_pedidoprodutoproduto`
-    FOREIGN KEY (`ProdutoId`)
-    REFERENCES `Produto` (`ProdutoId`)
+CREATE TABLE Pedido_Produto (
+PedidoProdutoId INT NOT NULL AUTO_INCREMENT,
+PedidoId INT NOT NULL,
+ProdutoId INT NOT NULL,
+Quantidade FLOAT NOT NULL,
+PRIMARY KEY (PedidoProdutoId),
+FOREIGN KEY (PedidoId) REFERENCES Pedido (PedidoId) ON DELETE CASCADE,
+FOREIGN KEY (ProdutoId) REFERENCES Produto (ProdutoId) ON DELETE CASCADE
 );
 
-CREATE INDEX `fk_pedidoprodutopedido_idx` ON `Pedido_Produto` (`PedidoId` ASC) VISIBLE;
-CREATE INDEX `fk_pedidoprodutoproduto_idx` ON `Pedido_Produto` (`ProdutoId` ASC) VISIBLE;
+CREATE INDEX IX_Pedido_Produto_PedidoId ON Pedido_Produto (PedidoId);
+CREATE INDEX IX_Pedido_Produto_ProdutoId ON Pedido_Produto (ProdutoId);
+CREATE INDEX PedidoProdutoId ON Pedido_Produto (PedidoProdutoId);
 
---
--- INSERTS INTO DbRestaurante
---
 
-INSERT INTO `Categoria` VALUES (1,'Bebidas Alcoólica','+18'),(2,'Bebidas','Todas as idades'),(3,'Frutos do Mar','Verificar Alergias'),(4,'Pizza','8 Pedaços'),(6,'Sucos','Feito de Frutas naturais'),(7,'Laticinios','Contém Leite');
-INSERT INTO `Garcon` VALUES (1,'Roberson','Silva','123.456.789.10','(11)98764-4578'),(2,'Fabiana','Oliveira Ferreira Andrade','654.987.321.58','(11)99847-3165'),(3,'Juan','Felix','546.328.173-43','(11) 99266-8225'),(5,'Maitê','Carolina Rosa Lopes','967.327.928-49','(21) 98672-8543'),(6,'Tomás','Marcelo Baptista','217.510.340-46','(91) 99606-8777'),(7,'Augusto','Oliveira','894.457.149-74','(45) 97874-4513');
-INSERT INTO `Mesa` VALUES (1,1805,0,''),(2,205,1,'2023-05-07 03:37:37.3678925'),(3,240,0,''),(4,280,0,''),(20,777,1,'2023-05-07 04:09:57.8450952');
-INSERT INTO `Produto` VALUES (1,'Pizza de Calabresa','Uma pizza de calabresa é um prato típico da culinária italiana, composta por uma base de massa de pizza coberta com molho de tomate, queijo muçarela e fatias de calabresa, que é uma linguiça defumada picante',45.95,4),(2,'Pizza de Mussarela','Uma pizza de Mussarela é composta por uma base de massa de pizza coberta com molho de tomate, queijo Mussarela.',41.99,4),(4,'Caipirinha ','Limão',25.50,1),(5,'Vodka com Energetico ','Askov com RedBull',20.00,1),(6,'Sushi','Contém 4 peças',50.00,3),(7,'Sashimi','Contém 6 peças',55.00,3),(8,'Coca-Cola','600 ml',7.99,2),(9,'Sprite','450 ml',5.00,2),(11,'Sorvete 2 Bolas','Sabores: Morango, Chocolate, Baunilha, Maracujá, Flocos',13.99,7);
-INSERT INTO `Atendimento` VALUES (1,1,1,'2023-04-10 18:34:30.9550028','2023-05-15 08:52:43.196791'),(2,2,0,'2023-04-11 21:57:30.9550028',''),(21,4,1,'2023-04-17 10:46:44.6823062','2023-05-07 02:38:30.0183'),(73,20,0,'2023-05-07 02:46:07.800734','');
-INSERT INTO `Pedido` VALUES (1,2,3,'20:34:57'),(2,2,2,'20:47:23'),(3,2,1,'21:35:57'),(4,1,3,'21:35:57'),(5,1,2,'19:47:23'),(157,21,3,'2023-04-17 10:47:00'),(174,73,7,'2023-05-07 20:09:20'),(175,73,7,'2023-05-07 20:09:34');
-INSERT INTO `Pedido_Produto` VALUES (1,1,4,3.0),(2,2,6,7.0),(3,3,8,3.0),(4,4,1,1.0),(6,5,8,3.0),(11,157,8,5.0),(13,174,4,1.0),(14,175,11,2.0);
+#############################################
+#####		INSERIR DADOS NO BANCO		#####
+#############################################
+/*
+	Inserir Dados Garçom 
+*/
+
+INSERT into Garcon(
+	GarconId,
+	Nome,
+	Sobrenome,
+	Cpf,
+	Telefone
+)
+SELECT 
+	(SELECT COALESCE(MAX(GarconId),0) + 1 FROM Garcon) as GarconId,
+	'Rodrigo' as Nome,
+	'Ribeiro' as Sobrenome,
+	'217419' as Cpf,
+	'11992668225' as Telefone
+;
+
+INSERT into Garcon(
+	GarconId,
+	Nome,
+	Sobrenome,
+	Cpf,
+	Telefone
+)
+SELECT 
+	(SELECT COALESCE(MAX(GarconId),0) + 1 FROM Garcon) as GarconId,
+	'Larissa' as Nome,
+	'Valentina Helena Cardoso' as Sobrenome,
+	'74177530352' as Cpf,
+	'51987200752' as Telefone
+;
+
+INSERT into Garcon(
+	GarconId,
+	Nome,
+	Sobrenome,
+	Cpf,
+	Telefone
+)
+SELECT 
+	(SELECT COALESCE(MAX(GarconId),0) + 1 FROM Garcon) as GarconId,
+	'Maitê' as Nome,
+	'Carolina Rosa Lopes' as Sobrenome,
+	'96732792849' as Cpf,
+	'21986728543' as Telefone
+;
+
+INSERT into Garcon(
+	GarconId,
+	Nome,
+	Sobrenome,
+	Cpf,
+	Telefone
+)
+SELECT 
+	(SELECT COALESCE(MAX(GarconId),0) + 1 FROM Garcon) as GarconId,
+	'Tomás' as Nome,
+	'Marcelo Baptista' as Sobrenome,
+	'21751034046' as Cpf,
+	'91996068774' as Telefone
+;
+
+/*
+	Inserir Dados Categoria 
+*/
+
+insert into Categoria(
+	CategoriaId,
+	Nome,
+	Descricao
+)
+SELECT 
+	(SELECT COALESCE(MAX(CategoriaId),0) + 1 FROM Categoria) as CategoriaId,
+	'Bebidas Alcoólica' as Nome,
+	'+18' as Descricao
+;
+
+insert into Categoria(
+	CategoriaId,
+	Nome,
+	Descricao
+)
+SELECT 
+	(SELECT COALESCE(MAX(CategoriaId),0) + 1 FROM Categoria) as CategoriaId,
+	'Bebidas' as Nome,
+	'Todas as idades' as Descricao
+;
+
+insert into Categoria(
+	CategoriaId,
+	Nome,
+	Descricao
+)
+SELECT 
+	(SELECT COALESCE(MAX(CategoriaId),0) + 1 FROM Categoria) as CategoriaId,
+	'Frutos do Mar' as Nome,
+	'Verificar Alergias' as Descricao
+;
+
+insert into Categoria(
+	CategoriaId,
+	Nome,
+	Descricao
+)
+SELECT 
+	(SELECT COALESCE(MAX(CategoriaId),0) + 1 FROM Categoria) as CategoriaId,
+	'Pizza' as Nome,
+	'8 Pedaços' as Descricao
+;
+
+/*
+	Inserir Dados Produto 
+*/
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Pizza de Calabresa' as Nome,
+	'Uma pizza de calabresa é um prato típico da culinária italiana, composta por uma base de massa de pizza coberta com molho de tomate, queijo muçarela e fatias de calabresa, que é uma linguiça defumada picante. Alguns ingredientes opcionais, como cebola, azeitonas e pimentão, podem ser adicionados para dar um sabor extra à pizza. A pizza de calabresa é uma opção popular em pizzarias em todo o mundo, sendo um prato muito apreciado por quem gosta de alimentos saborosos e picantes.' as Descricao,
+	37.66 as Preco,
+	4 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Pizza de Calabresa' as Nome,
+	'Uma pizza de calabresa é um prato típico da culinária italiana, composta por uma base de massa de pizza coberta com molho de tomate, queijo muçarela e fatias de calabresa, que é uma linguiça defumada picante. Alguns ingredientes opcionais, como cebola, azeitonas e pimentão, podem ser adicionados para dar um sabor extra à pizza. A pizza de calabresa é uma opção popular em pizzarias em todo o mundo, sendo um prato muito apreciado por quem gosta de alimentos saborosos e picantes.' as Descricao,
+	36.96 as Preco,
+	4 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Pizza 4 Queijos ' as Nome,
+	'Uma pizza 4 queijos é um prato típico da culinária italiana, composta por uma base de massa de pizza coberta com molho de tomate e uma mistura de quatro tipos diferentes de queijos, que geralmente são: muçarela, parmesão, gorgonzola e provolone.' as Descricao,
+	38.50 as Preco,
+	4 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Caipirinha ' as Nome,
+	'Limão' as Descricao,
+	25.50 as Preco,
+	1 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Vodka com Energetico ' as Nome,
+	'Askov com RedBull' as Descricao,
+	20.00 as Preco,
+	1 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Sushi' as Nome,
+	'Contém 4 peças' as Descricao,
+	50.00 as Preco,
+	3 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Sashimi' as Nome,
+	'Contém 6 peças' as Descricao,
+	55.00 as Preco,
+	3 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Coca-Cola' as Nome,
+	'600 ml' as Descricao,
+	7.99 as Preco,
+	2 as CategoriaId
+;
+
+insert into Produto(
+	ProdutoId,
+	Nome,
+	Descricao,
+	Preco,
+	CategoriaId
+)
+SELECT 
+	(SELECT COALESCE(MAX(ProdutoId),0) + 1 FROM Produto) as ProdutoId,
+	'Sprite' as Nome,
+	'450 ml' as Descricao,
+	5.00 as Preco,
+	2 as CategoriaId
+;
+
+/*
+	Inserir Dados Mesa 
+*/
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	205 as Numero,
+	true as Status,
+	time('22:00') as HoraAbertura
+;
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	210 as Numero,
+	true as Status,
+	time('20:00') as HoraAbertura
+;
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	240 as Numero,
+	false as Status,
+	null as HoraAbertura
+;
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	280 as Numero,
+	true as Status,
+	time('20:30') as HoraAbertura
+;
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	360 as Numero,
+	false as Status,
+	null as HoraAbertura
+;
+
+insert into Mesa(
+	MesaId,
+	Numero,
+	Status,
+	HoraAbertura
+)
+SELECT 
+	(SELECT COALESCE(MAX(MesaId),0) + 1 FROM Mesa)as MesaId,
+	420 as Numero,
+	false as Status,
+	null as HoraAbertura
+;
+
+/*
+	Inserir Dados Atendimento 
+*/
+
+insert into Atendimento(
+	AtendimentoId,
+	MesaId,
+	AtendimentoFechado,
+	DataCriacao
+)
+SELECT 
+	(SELECT COALESCE(MAX(AtendimentoId),0) + 1 FROM Atendimento)as AtendimentoId,
+	1 as MesaId,
+	0 as AtendimentoFechado,
+	current_timestamp() as DataCriacao
+;
+
+insert into Atendimento(
+	AtendimentoId,
+	MesaId,
+	AtendimentoFechado,
+	DataCriacao
+)
+SELECT 
+	(SELECT COALESCE(MAX(AtendimentoId),0) + 1 FROM Atendimento)as AtendimentoId,
+	2 as MesaId,
+	0 as AtendimentoFechado,
+	current_timestamp() as DataCriacao
+;
+
+insert into Atendimento(
+	AtendimentoId,
+	MesaId,
+	AtendimentoFechado,
+	DataCriacao
+)
+SELECT 
+	(SELECT COALESCE(MAX(AtendimentoId),0) + 1 FROM Atendimento)as AtendimentoId,
+	4 as MesaId,
+	0 as AtendimentoFechado,
+	current_timestamp() as DataCriacao
+;
+
+/*
+	Inserir Dados Atendimento 
+*/
+
+insert into Pedido(
+	PedidoId,
+	AtendimentoId,
+	GarconId,
+	HorarioPedido
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoId),0) + 1 FROM Pedido)as PedidoId,
+	2 as AtendimentoId,
+	3 as GarconId,
+	time('20:34:57') as HorarioPedido
+;
+
+insert into Pedido(
+	PedidoId,
+	AtendimentoId,
+	GarconId,
+	HorarioPedido
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoId),0) + 1 FROM Pedido)as PedidoId,
+	2 as AtendimentoId,
+	1 as GarconId,
+	time('21:35:57') as HorarioPedido
+;
+
+insert into Pedido(
+	PedidoId,
+	AtendimentoId,
+	GarconId,
+	HorarioPedido
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoId),0) + 1 FROM Pedido)as PedidoId,
+	1 as AtendimentoId,
+	3 as GarconId,
+	time('21:35:57') as HorarioPedido
+;
+
+insert into Pedido(
+	PedidoId,
+	AtendimentoId,
+	GarconId,
+	HorarioPedido
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoId),0) + 1 FROM Pedido)as PedidoId,
+	2 as AtendimentoId,
+	2 as GarconId,
+	time('20:47:23') as HorarioPedido
+;
+
+insert into Pedido(
+	PedidoId,
+	AtendimentoId,
+	GarconId,
+	HorarioPedido
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoId),0) + 1 FROM Pedido)as PedidoId,
+	1 as AtendimentoId,
+	2 as GarconId,
+	time('19:47:23') as HorarioPedido
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	1 as PedidoId,
+	4 AS ProdutoId,
+	3 as Quantidade
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	2 as PedidoId,
+	6 AS ProdutoId,
+	7 as Quantidade
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	3 as PedidoId,
+	8 AS ProdutoId,
+	3 as Quantidade
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	4 as PedidoId,
+	1 AS ProdutoId,
+	1 as Quantidade
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	4 as PedidoId,
+	3 AS ProdutoId,
+	1 as Quantidade
+;
+
+insert into Pedido_Produto(
+	PedidoProdutoId,
+	PedidoId,
+	ProdutoId,
+	Quantidade
+)
+SELECT 
+	(SELECT COALESCE(MAX(PedidoProdutoId),0) + 1 FROM Pedido_Produto)as PedidoProdutoId,
+	5 as PedidoId,
+	8 AS ProdutoId,
+	3 as Quantidade
+;
+
