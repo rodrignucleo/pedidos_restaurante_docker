@@ -5,13 +5,9 @@ docker-compose down
 docker-compose build
 docker-compose up -d
 
-timeout 5
+timeout 10
 
-docker restart mysql-container
+@REM docker exec -it mysql-container bash
+@REM mysql -u root -p12345678 < /docker-entrypoint-initdb.d/createDb.sql
 
-timeout 5
-
-docker exec -it mysql-container bash
-mysql -u root -p12345678 < /docker-entrypoint-initdb.d/createDb.sql
-
-start firefox localhost:9001
+@REM start firefox localhost:9001

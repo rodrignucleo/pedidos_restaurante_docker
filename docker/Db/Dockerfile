@@ -1,10 +1,5 @@
-FROM mysql
+FROM mysql:latest
 
-ENV MYSQL_DATABASE="DbRestaurante" \
-    MYSQL_ROOT_PASSWORD="12345678" \
-    MYSQL_ROOT_HOST="root"
-EXPOSE 3306
+ENV MYSQL_ROOT_PASSWORD="12345678"
 
-COPY ./Db/Script/createDb.sql /docker-entrypoint-initdb.d/
-
-VOLUME Data:/var/lib/mysql
+COPY ./Db/Script/init.sql /docker-entrypoint-initdb.d/
